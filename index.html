@@ -1,0 +1,1962 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#121926" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Lider Zmiany" />
+  <link rel="icon" type="image/png" href="lider-zmiany-icon.png" />
+  <link rel="apple-touch-icon" href="lider-zmiany-icon.png" />
+  <title>Lider Zmiany</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --panel: #fff;
+      --ink: #17202c;
+      --muted: #647184;
+      --line: #d9dee7;
+      --blue: #2563eb;
+      --green: #16865a;
+      --amber: #d97706;
+      --red: #dc2626;
+      --soft-blue: #eaf1ff;
+      --soft-green: #e9f8f1;
+      --soft-amber: #fff4dc;
+      --soft-red: #fff0f0;
+      --shadow: 0 18px 45px rgba(23, 32, 44, .08);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      border-radius: 7px;
+      min-height: 38px;
+      padding: 0 13px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    button.secondary {
+      background: #eef2f7;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    button.danger {
+      background: var(--soft-red);
+      color: var(--red);
+      border: 1px solid #ffc7c7;
+    }
+
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--ink);
+      min-height: 40px;
+      padding: 9px 10px;
+      outline: none;
+    }
+
+    textarea { resize: vertical; min-height: 72px; }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+    }
+
+    input.invalid, select.invalid {
+      border-color: var(--red);
+      background: var(--soft-red);
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #4d596b;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 286px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: #121926;
+      color: #f7f9fc;
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 25px;
+      letter-spacing: 0;
+    }
+
+    .brand span {
+      color: #b7c2d2;
+      font-size: 13px;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav button {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      color: #dbe4f2;
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav button.active {
+      background: #223149;
+      border-color: #33445f;
+      color: #fff;
+    }
+
+    .sidebar-stats {
+      margin-top: auto;
+      display: grid;
+      gap: 10px;
+    }
+
+    .stat {
+      border: 1px solid #33445f;
+      background: #182235;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .stat strong { display: block; font-size: 22px; }
+    .stat span { color: #b7c2d2; font-size: 12px; }
+
+    main {
+      padding: 28px;
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: 0;
+    }
+
+    .topbar p {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
+
+    .hello {
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      border: 1px solid #bdd0ff;
+      background: var(--soft-blue);
+      color: #1746af;
+      font-weight: 900;
+    }
+
+    .alert-bar {
+      display: none;
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      border: 1px solid #ffb7b7;
+      background: var(--soft-red);
+      color: var(--red);
+      font-weight: 900;
+    }
+
+    .alert-bar.show { display: block; }
+
+    .grid { display: grid; gap: 16px; }
+    .two { grid-template-columns: minmax(320px, .8fr) minmax(0, 1.2fr); align-items: start; }
+    .three { grid-template-columns: repeat(3, minmax(210px, 1fr)); }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      min-width: 0;
+    }
+
+    .panel h3 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+
+    .form-grid { display: grid; gap: 12px; }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .station-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .station-tabs button {
+      background: #eef2f7;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .station-tabs button.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 780px;
+      background: #fff;
+    }
+
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    th {
+      color: #526073;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      background: #f7f9fc;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    tr.gate-live td {
+      background: var(--soft-green);
+      border-bottom-color: #bfead3;
+    }
+
+    tr.gate-closed td {
+      background: var(--soft-red);
+      border-bottom-color: #ffc7c7;
+    }
+
+    .badge {
+      display: inline-flex;
+      min-height: 25px;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .badge.green { background: var(--soft-green); color: var(--green); }
+    .badge.red { background: var(--soft-red); color: var(--red); }
+    .badge.blue { background: var(--soft-blue); color: var(--blue); }
+    .badge.amber { background: var(--soft-amber); color: var(--amber); }
+
+    .error-text {
+      display: none;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .error-text.show { display: block; }
+
+    .shift-list { display: grid; gap: 10px; }
+
+    .person {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px;
+      background: #fff;
+    }
+
+    .person.ending {
+      border-color: #ff9a9a;
+      background: var(--soft-red);
+    }
+
+    .person.break {
+      background: var(--soft-blue);
+      border-color: #bdd0ff;
+    }
+
+    .person.not-prm {
+      background: #e5e7eb;
+      border-color: #b8bec8;
+      color: #596273;
+    }
+
+    .person.not-prm small {
+      color: #737c89;
+    }
+
+    .person strong {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .person small {
+      color: var(--muted);
+      display: block;
+      margin-top: 2px;
+    }
+
+    .stations {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .station {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .station.closed {
+      opacity: .62;
+      background: #f8fafc;
+    }
+
+    .station-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .station-title strong { display: block; overflow-wrap: anywhere; }
+    .station-title small { color: var(--muted); }
+
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      font-weight: 800;
+      color: #4c586b;
+      font-size: 13px;
+    }
+
+    .toggle input {
+      width: 18px;
+      height: 18px;
+      min-height: 0;
+      accent-color: var(--blue);
+    }
+
+    .slots { display: grid; gap: 9px; }
+
+    .slot {
+      border: 1px solid var(--line);
+      background: #f9fbfd;
+      border-radius: 8px;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .slot.assigned { background: var(--soft-green); border-color: #bfead3; }
+    .slot.warning { background: var(--soft-amber); border-color: #f6ce7e; }
+    .slot.danger { background: var(--soft-red); border-color: #ffa7a7; }
+
+    .slot-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .time {
+      font-variant-numeric: tabular-nums;
+      font-weight: 900;
+      color: var(--green);
+    }
+
+    .slot.warning .time { color: var(--amber); }
+    .slot.danger .time { color: var(--red); }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 14px;
+    }
+
+    .summary-box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+    }
+
+    .summary-box strong { display: block; font-size: 24px; }
+    .summary-box span { color: var(--muted); font-size: 13px; }
+
+    .hidden { display: none !important; }
+
+    .empty {
+      border: 1px dashed #b9c2cf;
+      color: var(--muted);
+      padding: 18px;
+      border-radius: 8px;
+      text-align: center;
+      background: #fbfcfe;
+    }
+
+    @media (max-width: 1060px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { min-height: auto; }
+      .sidebar-stats { grid-template-columns: repeat(3, 1fr); }
+      .two, .three, .stations, .summary { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      body { padding-bottom: 78px; }
+
+      .app { display: block; }
+
+      .sidebar {
+        position: fixed;
+        z-index: 50;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 8px;
+        background: #121926;
+        box-shadow: 0 -8px 24px rgba(23, 32, 44, .18);
+      }
+
+      .brand, .sidebar-stats { display: none; }
+
+      .nav {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+      }
+
+      .nav::-webkit-scrollbar { display: none; }
+
+      .nav button {
+        width: auto;
+        flex: 0 0 auto;
+        min-height: 48px;
+        padding: 0 14px;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      main { padding: 14px; }
+      .topbar { display: grid; }
+      .person { grid-template-columns: 1fr; }
+
+      .topbar h2 { font-size: 24px; }
+
+      .panel {
+        padding: 14px;
+        box-shadow: none;
+      }
+
+      button, input, select, textarea { min-height: 46px; }
+
+      .row > button {
+        flex: 1 1 150px;
+      }
+
+      .station-head {
+        align-items: flex-start;
+      }
+
+      .station-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+      }
+
+      .station-tabs button {
+        flex: 0 0 auto;
+        white-space: nowrap;
+      }
+
+      table { min-width: 680px; }
+
+      .hello, .alert-bar {
+        position: relative;
+        margin-bottom: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>Lider Zmiany</h1>
+        <span>Zarządzanie obsadą na lotnisku</span>
+      </div>
+      <nav class="nav" aria-label="Widoki aplikacji">
+        <button class="active" data-view-button="shift">Zmiana</button>
+        <button data-view-button="stations">Stanowiska</button>
+        <button data-view-button="arrivals">Przyloty NON-Schengen</button>
+        <button data-view-button="passports">Paszporty</button>
+        <button data-view-button="gates">Gate</button>
+        <button data-view-button="breaks">Przerwa</button>
+        <button data-view-button="employees">Pracownicy</button>
+        <button data-view-button="summary">Podsumowanie</button>
+      </nav>
+      <div class="sidebar-stats">
+        <div class="stat"><strong id="statEmployees">0</strong><span>pracowników w bazie</span></div>
+        <div class="stat"><strong id="statPresent">0</strong><span>obecnych dziś</span></div>
+        <div class="stat"><strong id="statAssigned">0</strong><span>obsadzonych miejsc</span></div>
+      </div>
+    </aside>
+
+    <main>
+      <div id="helloBanner" class="hello hidden"></div>
+      <div id="endingBanner" class="alert-bar"></div>
+
+      <section id="view-shift" data-view>
+        <div class="topbar">
+          <div>
+            <h2>Obecność na zmianie</h2>
+            <p>Zatwierdź pracowników, którzy pojawili się na zmianie. Od tego momentu aplikacja liczy ich czas.</p>
+          </div>
+          <button id="resetDayButton" class="danger">Nowy dzień</button>
+        </div>
+        <div class="grid two">
+          <div class="panel">
+            <h3>Zaznacz obecność</h3>
+            <div class="form-grid">
+              <label>Wyszukaj pracownika <input id="attendanceSearch" list="employeesList" placeholder="Wpisz nazwisko lub imię" /></label>
+              <label>Godzina zakończenia zmiany <input id="attendanceShiftEnd" type="time" required /></label>
+              <label class="toggle"><input id="attendancePrm" type="checkbox" /> PRM</label>
+              <label id="todayRoleField" class="hidden">Rola lidera na dziś
+                <select id="todayRole">
+                  <option value="">Bez przypisanej roli</option>
+                  <option value="lider">Lider zmiany</option>
+                  <option value="koordynator">Koordynator Gate</option>
+                </select>
+              </label>
+              <button id="confirmAttendanceButton">Zatwierdź obecność</button>
+              <p id="attendanceMessage" class="empty hidden"></p>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Obecni pracownicy</h3>
+            <div id="presentList" class="shift-list"></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:16px">
+          <h3>Lider zmiany</h3>
+          <div class="stations" id="leaderStationGrid"></div>
+        </div>
+      </section>
+
+      <section id="view-stations" data-view class="hidden">
+        <div class="topbar">
+          <div>
+            <h2>Stanowiska</h2>
+            <p>Otwórz stanowisko, wybierz pracownika i zatwierdź obsadę. SKAN ostrzega po 2h i alarmuje po 3h, kontrola po 1,5h i 2h.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="station-tabs" id="stationTabs"></div>
+          <div class="stations" id="stationsGrid"></div>
+        </div>
+      </section>
+
+      <section id="view-arrivals" data-view class="hidden">
+        <div class="topbar">
+          <div>
+            <h2>Przyloty NON-Schengen</h2>
+            <p>Obsadź stanowisko Przyloty i wpisz przyloty NON-Schengen na bieżący dzień.</p>
+          </div>
+        </div>
+        <div class="panel" style="margin-bottom:16px">
+          <div class="stations" id="arrivalStationGrid"></div>
+        </div>
+        <div class="grid two">
+          <div class="panel">
+            <h3>Lista przylotów dnia</h3>
+            <form id="arrivalForm" class="form-grid">
+              <input type="hidden" id="arrivalId" />
+              <label>Godzina przylotu <input id="arrivalTime" type="time" required /></label>
+              <label>Kod lotniska / lot <select id="arrivalCode" required></select></label>
+              <label>Osoba odpowiedzialna <select id="arrivalEmployee"></select></label>
+              <label>Uwagi <textarea id="arrivalNotes"></textarea></label>
+              <div class="row">
+                <button type="submit">Zapisz przylot</button>
+                <button type="button" id="cancelArrivalEdit" class="secondary hidden">Anuluj edycję</button>
+              </div>
+            </form>
+          </div>
+          <div class="panel">
+            <h3>Lista przylotów</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Godzina</th><th>Lot</th><th>Osoba</th><th>Uwagi</th><th>Akcje</th></tr></thead>
+                <tbody id="arrivalsTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:16px">
+          <h3>Baza przylotów i odlotów NON-Schengen z Wrocławia</h3>
+          <form id="customNonSchengenForm" class="form-grid" style="margin-bottom:14px">
+            <div class="grid three">
+              <label>Typ
+                <select id="customFlightType">
+                  <option value="Przylot">Przylot</option>
+                  <option value="Odlot">Odlot</option>
+                </select>
+              </label>
+              <label>Kod <input id="customFlightCode" placeholder="np. ABC" required /></label>
+              <label>Lotnisko <input id="customFlightAirport" placeholder="Nazwa lotniska" required /></label>
+            </div>
+            <div class="row">
+              <button type="submit">Dodaj do bazy NON-Schengen</button>
+            </div>
+          </form>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Typ</th><th>Kod</th><th>Lotnisko</th><th>Kraj / grupa</th></tr></thead>
+              <tbody id="nonSchengenTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-passports" data-view class="hidden">
+        <div class="topbar">
+          <div>
+            <h2>Paszporty</h2>
+            <p>Stanowisko Paszporty ma jedną osobę podstawową i opcjonalnie drugą. Ostrzeżenie po 2h, alarm po 3h.</p>
+          </div>
+        </div>
+        <div class="panel" style="margin-bottom:16px">
+          <div class="stations" id="passportStationGrid"></div>
+        </div>
+      </section>
+
+      <section id="view-gates" data-view class="hidden">
+        <div class="topbar">
+          <div>
+            <h2>Gate</h2>
+            <p>Wybierz Gate Ryanair z bazy, wpisz boarding i obsadź dwie osoby. Aplikacja pilnuje konfliktów godzinowych oraz zlicza P-Bagi i G-Bagi.</p>
+          </div>
+        </div>
+        <div class="grid two">
+          <div class="panel">
+            <h3>Gate Ryanair</h3>
+            <form id="gateForm" class="form-grid">
+              <input type="hidden" id="gateId" />
+              <label>Kod lotniska / Gate <select id="gateCode" required></select></label>
+              <label>Godzina boardingu <input id="gateBoarding" type="time" required /></label>
+              <label>Pracownik 1 <select id="gateEmployee1"></select></label>
+              <label>Pracownik 2 <select id="gateEmployee2"></select></label>
+              <p id="gateMessage" class="empty hidden"></p>
+              <button type="button" id="gateForceButton" class="danger hidden">Wyślij mimo to</button>
+              <div class="row">
+                <button type="submit">Zapisz Gate</button>
+                <button type="button" id="cancelGateEdit" class="secondary hidden">Anuluj edycję</button>
+              </div>
+            </form>
+          </div>
+          <div class="panel">
+            <h3>Lista Gate</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Boarding</th><th>Kod</th><th>Obsada</th><th>Bagaże</th><th>Akcje</th></tr></thead>
+                <tbody id="gatesTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:16px">
+          <h3>Baza Gate Ryanair</h3>
+          <form id="customGateForm" class="form-grid" style="margin-bottom:14px">
+            <div class="grid two">
+              <label>Kod Gate <input id="customGateCode" placeholder="np. ABC" required /></label>
+              <label>Lotnisko <input id="customGateAirport" placeholder="Nazwa lotniska" required /></label>
+            </div>
+            <div class="row">
+              <button type="submit">Dodaj Gate do bazy</button>
+            </div>
+          </form>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Kod</th><th>Lotnisko</th></tr></thead>
+              <tbody id="ryanairGateTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-breaks" data-view class="hidden">
+        <div class="topbar">
+          <div>
+            <h2>Przerwa</h2>
+            <p>Osoba trafia tu automatycznie po zdjęciu lub zmianie ze stanowiska. Gdy wróci na stanowisko albo Gate, zostanie zdjęta z przerwy.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <div id="breakList" class="shift-list"></div>
+        </div>
+      </section>
+
+      <section id="view-employees" data-view class="hidden">
+        <div class="topbar">
+          <div>
+            <h2>Baza pracowników</h2>
+            <p>Dodawaj i edytuj dane pracowników oraz rolę lidera. Godzinę zakończenia wpisujesz przy zatwierdzaniu obecności.</p>
+          </div>
+        </div>
+        <div class="grid two">
+          <div class="panel">
+            <h3 id="employeeFormTitle">Nowy pracownik</h3>
+            <form id="employeeForm" class="form-grid">
+              <input type="hidden" id="employeeId" />
+              <label>Imię <input id="firstName" required autocomplete="given-name" /></label>
+              <label>Nazwisko <input id="lastName" required autocomplete="family-name" /></label>
+              <label>Numer przepustki <input id="badgeNumber" autocomplete="off" /><span class="error-text">brak przepustki</span></label>
+              <label class="toggle"><input id="isLeader" type="checkbox" /> Lider</label>
+              <div class="row">
+                <button type="submit">Zapisz pracownika</button>
+                <button type="button" id="cancelEditButton" class="secondary hidden">Anuluj edycję</button>
+              </div>
+            </form>
+          </div>
+          <div class="panel">
+            <h3>Lista pracowników</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Pracownik</th><th>Przepustka</th><th>Status</th><th>Akcje</th></tr>
+                </thead>
+                <tbody id="employeesTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-summary" data-view class="hidden">
+        <div class="topbar">
+          <div>
+            <h2>Podsumowanie dnia</h2>
+            <p>Tu widać obecność, nieobecnych, aktualną obsadę, bagaże i alerty rotacji.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="summary">
+            <div class="summary-box"><strong id="summaryPresent">0</strong><span>obecnych</span></div>
+            <div class="summary-box"><strong id="summaryAbsent">0</strong><span>nieobecnych</span></div>
+            <div class="summary-box"><strong id="summaryAlerts">0</strong><span>alertów rotacji</span></div>
+            <div class="summary-box"><strong id="summaryBags">0</strong><span>P-Bagi + G-Bagi</span></div>
+          </div>
+          <div class="panel"><h3>Pracownicy, którzy się nie pojawili</h3><div id="absentList" class="shift-list"></div></div>
+          <div class="panel"><h3>Aktualna obsada</h3><div id="assignmentSummary" class="shift-list"></div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <datalist id="employeesList"></datalist>
+
+  <script>
+    const storageKey = "lider-zmiany-state-v2";
+    const now = () => Date.now();
+
+    const stationTemplate = [
+      { id: "fast-track", group: "KONTROLA BEZPIECZEŃSTWA", name: "Fast Track", required: 1, max: 1, warn: 90, danger: 120 },
+      { id: "pierwszy", group: "KONTROLA BEZPIECZEŃSTWA", name: "\"Pierwszy\" ciąg", required: 1, max: 2, warn: 90, danger: 120 },
+      { id: "czwarty-piaty", group: "KONTROLA BEZPIECZEŃSTWA", name: "\"Czwarty/Piąty\" ciąg", required: 1, max: 2, warn: 90, danger: 120 },
+      { id: "glowny", group: "KONTROLA BEZPIECZEŃSTWA", name: "\"Główny\" ciąg", required: 1, max: 2, warn: 90, danger: 120 },
+      { id: "ema", group: "KONTROLA BEZPIECZEŃSTWA", name: "\"Ema\"", required: 2, max: 2, warn: 90, danger: 120 },
+      { id: "skan", group: "SKAN", name: "Skan", required: 1, max: 2, warn: 120, danger: 180 },
+      { id: "przyloty", group: "PRZYLOTY", name: "Przyloty", required: 2, max: 3, warn: 90, danger: 120 },
+      { id: "paszporty", group: "PASZPORTY", name: "Paszporty", required: 1, max: 2, warn: 120, danger: 180 },
+      { id: "lider-zmiany", group: "ZARZĄDZANIE", name: "Lider Zmiany", required: 1, max: 1, warn: 99999, danger: 999999, alwaysOpen: true }
+    ];
+
+    const stationGroups = [
+      { id: "kontrola", label: "Kontrola bezpieczeństwa", stationIds: ["fast-track", "pierwszy", "czwarty-piaty", "glowny", "ema"] },
+      { id: "skan", label: "SKAN", stationIds: ["skan"] }
+    ];
+
+    const nonSchengenFlights = [
+      { type: "Odlot", group: "Wielka Brytania", code: "STN", airport: "London Stansted" },
+      { type: "Odlot", group: "Wielka Brytania", code: "MAN", airport: "Manchester" },
+      { type: "Odlot", group: "Wielka Brytania", code: "EMA", airport: "East Midlands" },
+      { type: "Odlot", group: "Wielka Brytania", code: "BRS", airport: "Bristol" },
+      { type: "Odlot", group: "Wielka Brytania", code: "LTN", airport: "London Luton" },
+      { type: "Odlot", group: "Wielka Brytania", code: "NCL", airport: "Newcastle (sezon zimowy)" },
+      { type: "Odlot", group: "Albania", code: "TIA", airport: "Tirana" },
+      { type: "Przylot", group: "Wielka Brytania", code: "STN", airport: "London Stansted" },
+      { type: "Przylot", group: "Wielka Brytania", code: "MAN", airport: "Manchester" },
+      { type: "Przylot", group: "Wielka Brytania", code: "EMA", airport: "East Midlands" },
+      { type: "Przylot", group: "Wielka Brytania", code: "BRS", airport: "Bristol" },
+      { type: "Przylot", group: "Wielka Brytania", code: "LTN", airport: "London Luton" },
+      { type: "Przylot", group: "Wielka Brytania", code: "NCL", airport: "Newcastle (sezon zimowy)" },
+      { type: "Przylot", group: "Albania", code: "TIA", airport: "Tirana" }
+    ];
+
+    const ryanairGates = [
+      ["STN", "London Stansted"], ["DUB", "Dublin"], ["MAN", "Manchester"], ["GDN", "Gdansk"],
+      ["BLQ", "Bolonia"], ["PSA", "Piza"], ["BGY", "Bergamo (Mediolan Bergamo)"], ["CIA", "Rzym Ciampino"],
+      ["CRL", "Bruksela Charleroi"], ["AGP", "Malaga"], ["ALC", "Alicante"], ["PMI", "Palma de Mallorca"],
+      ["PFO", "Pafos"], ["ATH", "Ateny"], ["SOF", "Sofia"], ["SVQ", "Sewilla"],
+      ["TSF", "Wenecja Treviso"], ["BRS", "Bristol"], ["EMA", "East Midlands"], ["LTN", "Londyn Luton"],
+      ["CFU", "Korfu"], ["CHQ", "Chania"], ["HER", "Heraklion"], ["RHO", "Rodos"],
+      ["ZTH", "Zakynthos"], ["CTA", "Katania"], ["CAG", "Cagliari"], ["OLB", "Olbia"],
+      ["RMI", "Rimini"], ["TIA", "Tirana"], ["FUE", "Fuerteventura"], ["ACE", "Lanzarote"],
+      ["IBZ", "Ibiza"], ["VLC", "Walencja"], ["FAO", "Faro"], ["MLA", "Malta"],
+      ["BDS", "Brindisi"], ["SPU", "Split"], ["ZAD", "Zadar"], ["PUY", "Pula"],
+      ["DBV", "Dubrownik"], ["KGS", "Kos"], ["BOJ", "Burgas"]
+    ].map(([code, airport]) => ({ code, airport }));
+
+    const starterEmployees = [
+      { firstName: "Anna", lastName: "Kowalska", badgeNumber: "A1245", isLeader: true },
+      { firstName: "Marek", lastName: "Nowak", badgeNumber: "B8721", isLeader: false },
+      { firstName: "Ola", lastName: "Zielinska", badgeNumber: "", isLeader: false },
+      { firstName: "Piotr", lastName: "Wisniewski", badgeNumber: "C4410", isLeader: true }
+    ];
+
+    let state = loadState();
+    let activeStationGroup = "kontrola";
+    let allowGateMissingPassOnce = false;
+
+    function loadState() {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) return normalizeState(JSON.parse(saved));
+      return normalizeState({
+        employees: starterEmployees.map(createEmployee),
+        attendance: {},
+        appearedToday: {},
+        todayRoles: {},
+        breaks: {},
+        stations: stationTemplate.map(station => ({ ...station, open: false, slots: Array.from({ length: station.max }, () => null) })),
+        arrivals: [],
+        gates: [],
+        customNonSchengenFlights: [],
+        customRyanairGates: [],
+        alertedEnding: {}
+      });
+    }
+
+    function normalizeState(raw) {
+      raw.todayRoles ||= {};
+      raw.appearedToday ||= {};
+      raw.breaks ||= {};
+      raw.arrivals ||= [];
+      raw.gates ||= [];
+      raw.customNonSchengenFlights ||= [];
+      raw.customRyanairGates ||= [];
+      raw.alertedEnding ||= {};
+      const legacyShiftEnds = Object.fromEntries((raw.employees || []).map(employee => [employee.id, employee.shiftEnd || ""]));
+      raw.employees = (raw.employees || []).map(employee => ({
+        id: employee.id || makeId(),
+        firstName: employee.firstName || "",
+        lastName: employee.lastName || "",
+        badgeNumber: employee.badgeNumber || "",
+        isLeader: Boolean(employee.isLeader)
+      }));
+      Object.keys(raw.attendance || {}).forEach(employeeId => {
+        if (typeof raw.attendance[employeeId] === "number") {
+          raw.attendance[employeeId] = { startedAt: raw.attendance[employeeId], shiftEnd: legacyShiftEnds[employeeId] || "", prm: true };
+        }
+        if (typeof raw.attendance[employeeId].prm !== "boolean") raw.attendance[employeeId].prm = true;
+        raw.appearedToday[employeeId] = true;
+      });
+      raw.stations = stationTemplate.map(template => {
+        const existing = (raw.stations || []).find(station => station.id === template.id);
+        return { ...template, open: template.alwaysOpen || (existing ? Boolean(existing.open) : false), slots: Array.from({ length: template.max }, (_, index) => existing && existing.slots ? existing.slots[index] || null : null) };
+      });
+      return raw;
+    }
+
+    function saveState() { localStorage.setItem(storageKey, JSON.stringify(state)); }
+    function makeId() { return crypto.randomUUID ? crypto.randomUUID() : String(now() + Math.random()); }
+
+    function createEmployee(employee) {
+      return {
+        id: makeId(),
+        firstName: employee.firstName.trim(),
+        lastName: employee.lastName.trim(),
+        badgeNumber: employee.badgeNumber.trim(),
+        isLeader: Boolean(employee.isLeader)
+      };
+    }
+
+    function allNonSchengenFlights() {
+      return [...nonSchengenFlights, ...state.customNonSchengenFlights];
+    }
+
+    function allRyanairGates() {
+      return [...ryanairGates, ...state.customRyanairGates];
+    }
+
+    function nonSchengenArrivalOptions() {
+      return allNonSchengenFlights()
+        .filter(item => item.type === "Przylot")
+        .map(item => ({ code: item.code, label: `${item.code} - ${item.airport}` }));
+    }
+
+    function fullName(employee) { return `${employee.firstName} ${employee.lastName}`.trim(); }
+    function findEmployee(id) { return state.employees.find(employee => employee.id === id); }
+    function isPresent(employeeId) { return Boolean(state.attendance[employeeId]); }
+    function attendanceRecord(employeeId) {
+      const record = state.attendance[employeeId];
+      if (!record) return null;
+      return typeof record === "number" ? { startedAt: record, shiftEnd: "" } : record;
+    }
+    function attendanceStartedAt(employeeId) {
+      const record = attendanceRecord(employeeId);
+      return record ? record.startedAt : null;
+    }
+    function attendanceShiftEnd(employeeId) {
+      const record = attendanceRecord(employeeId);
+      return record ? record.shiftEnd : "";
+    }
+    function attendanceIsPrm(employeeId) {
+      const record = attendanceRecord(employeeId);
+      return record ? record.prm !== false : false;
+    }
+    function removeFromBreak(employeeId) { delete state.breaks[employeeId]; }
+    function addToBreak(employeeId) {
+      if (employeeId && isPresent(employeeId) && !attendanceIsPrm(employeeId)) state.breaks[employeeId] ||= now();
+    }
+
+    function employeeFromText(text) {
+      const value = text.trim().toLowerCase();
+      return state.employees.find(employee => {
+        const options = [fullName(employee), employee.lastName, employee.firstName, employee.badgeNumber].map(item => String(item).toLowerCase());
+        return options.includes(value);
+      });
+    }
+
+    function assignedStationEmployeeIds() {
+      return new Set(state.stations.flatMap(station => station.slots.filter(Boolean).map(slot => slot.employeeId)));
+    }
+
+    function occupiedEmployeeIds() {
+      const ids = assignedStationEmployeeIds();
+      state.gates.forEach(gate => [gate.employee1, gate.employee2].forEach(id => id && ids.add(id)));
+      state.arrivals.forEach(arrival => arrival.employeeId && ids.add(arrival.employeeId));
+      return ids;
+    }
+
+    function reconcileAvailability() {
+      const leaderStation = state.stations.find(item => item.id === "lider-zmiany");
+      const leaderEntry = Object.entries(state.todayRoles).find(([employeeId, role]) => role === "lider" && isPresent(employeeId));
+      if (leaderStation && leaderEntry && (!leaderStation.slots[0] || leaderStation.slots[0].employeeId !== leaderEntry[0])) {
+        assignShiftLeader(leaderEntry[0]);
+      }
+      if (leaderStation && leaderStation.slots[0] && !isPresent(leaderStation.slots[0].employeeId)) {
+        leaderStation.slots[0] = null;
+      }
+      const occupied = occupiedEmployeeIds();
+      state.employees.forEach(employee => {
+        if (!isPresent(employee.id) || attendanceIsPrm(employee.id) || occupied.has(employee.id) || state.todayRoles[employee.id] === "lider") {
+          removeFromBreak(employee.id);
+        } else {
+          addToBreak(employee.id);
+        }
+      });
+    }
+
+    function elapsedText(startedAt) {
+      const seconds = Math.max(0, Math.floor((now() - startedAt) / 1000));
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    }
+
+    function slotLevel(slot, station) {
+      const minutes = (now() - slot.startedAt) / 60000;
+      if (minutes >= station.danger) return "danger";
+      if (minutes >= station.warn) return "warning";
+      return "assigned";
+    }
+
+    function minutesUntilShiftEnd(employee) {
+      const shiftEnd = employee ? attendanceShiftEnd(employee.id) : "";
+      if (!employee || !shiftEnd) return null;
+      const [hour, minute] = shiftEnd.split(":").map(Number);
+      const startedAt = attendanceStartedAt(employee.id);
+      if (!startedAt) return null;
+      const end = new Date(startedAt);
+      end.setHours(hour, minute, 0, 0);
+      if (end.getTime() <= startedAt) end.setDate(end.getDate() + 1);
+      return Math.round((end.getTime() - now()) / 60000);
+    }
+
+    function isEndingSoon(employee) {
+      const minutes = minutesUntilShiftEnd(employee);
+      return minutes !== null && minutes >= 0 && minutes <= 60;
+    }
+
+    function timeToMinutes(time) {
+      if (!time) return null;
+      const [hour, minute] = time.split(":").map(Number);
+      return hour * 60 + minute;
+    }
+
+    function gateConflict(employeeId, boarding, editedGateId) {
+      if (!employeeId || !boarding) return null;
+      const target = timeToMinutes(boarding);
+      return state.gates.find(gate => {
+        if (gate.id === editedGateId) return false;
+        if (gate.employee1 !== employeeId && gate.employee2 !== employeeId) return false;
+        const existing = timeToMinutes(gate.boarding);
+        return existing !== null && Math.abs(existing - target) < 60;
+      });
+    }
+
+    function gateCanEnterBags(gate) {
+      return gateStatus(gate) === "closed";
+    }
+
+    function gateStatus(gate) {
+      if (gate.closed) return "closed";
+      const boarding = timeToMinutes(gate.boarding);
+      if (boarding === null) return "waiting";
+      const current = new Date();
+      const currentMinutes = current.getHours() * 60 + current.getMinutes();
+      if (currentMinutes < boarding) return "waiting";
+      if (currentMinutes < boarding + 60) return "live";
+      return "closed";
+    }
+
+    function gateStatusBadge(status) {
+      if (status === "live") return '<span class="badge green">Na żywo</span>';
+      if (status === "closed") return '<span class="badge red">Zamknięty</span>';
+      return '<span class="badge amber">Oczekuje</span>';
+    }
+
+    function updateGateStatuses() {
+      const changed = state.gates.some(gate => {
+        const row = document.querySelector(`[data-gate-row="${gate.id}"]`);
+        return row && row.dataset.gateStatus !== gateStatus(gate);
+      });
+      if (changed) renderGates();
+    }
+
+    function findActiveAssignment(employeeId, currentStationId = "", currentIndex = -1, currentGateId = "", currentArrivalId = "") {
+      for (const station of state.stations) {
+        for (let index = 0; index < station.slots.length; index += 1) {
+          const slot = station.slots[index];
+          if (!slot || slot.employeeId !== employeeId) continue;
+          if (station.id === currentStationId && index === currentIndex) continue;
+          return `${station.name}, miejsce ${index + 1}`;
+        }
+      }
+      const gate = state.gates.find(item => item.id !== currentGateId && (item.employee1 === employeeId || item.employee2 === employeeId));
+      if (gate) return `Gate ${gate.code} o ${gate.boarding}`;
+      const arrival = state.arrivals.find(item => item.id !== currentArrivalId && item.employeeId === employeeId);
+      if (arrival) return `Przylot ${arrival.code} o ${arrival.time}`;
+      return "";
+    }
+
+    function assignShiftLeader(employeeId) {
+      const station = state.stations.find(item => item.id === "lider-zmiany");
+      if (!station) return;
+      const previousId = station.slots[0] && station.slots[0].employeeId;
+      Object.keys(state.todayRoles).forEach(id => {
+        if (state.todayRoles[id] === "lider") delete state.todayRoles[id];
+      });
+      if (previousId && previousId !== employeeId) addToBreak(previousId);
+      state.todayRoles[employeeId] = "lider";
+      if (state.attendance[employeeId]) state.attendance[employeeId].prm = false;
+      removeFromBreak(employeeId);
+      station.open = true;
+      station.slots[0] = { employeeId, startedAt: now() };
+    }
+
+    function removeEmployeeFromDay(employeeId) {
+      delete state.attendance[employeeId];
+      delete state.todayRoles[employeeId];
+      delete state.breaks[employeeId];
+      state.stations.forEach(station => {
+        station.slots = station.slots.map(slot => slot && slot.employeeId === employeeId ? null : slot);
+      });
+      state.gates.forEach(gate => {
+        if (gate.employee1 === employeeId) gate.employee1 = "";
+        if (gate.employee2 === employeeId) gate.employee2 = "";
+      });
+      state.arrivals.forEach(arrival => {
+        if (arrival.employeeId === employeeId) arrival.employeeId = "";
+      });
+    }
+
+    function autoRemoveFinishedWorkers() {
+      const finished = state.employees.filter(employee => isPresent(employee.id) && minutesUntilShiftEnd(employee) !== null && minutesUntilShiftEnd(employee) < 0);
+      if (!finished.length) return false;
+      finished.forEach(employee => removeEmployeeFromDay(employee.id));
+      return true;
+    }
+
+    function setMessage(element, message, danger = false) {
+      element.textContent = message;
+      element.classList.remove("hidden");
+      element.style.borderColor = danger ? "#ffa7a7" : "#b9c2cf";
+      element.style.color = danger ? "var(--red)" : "var(--muted)";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;" }[char]));
+    }
+
+    function switchView(viewName) {
+      document.querySelectorAll("[data-view]").forEach(view => view.classList.add("hidden"));
+      document.getElementById(`view-${viewName}`).classList.remove("hidden");
+      document.querySelectorAll("[data-view-button]").forEach(button => button.classList.toggle("active", button.dataset.viewButton === viewName));
+    }
+
+    function render() {
+      autoRemoveFinishedWorkers();
+      reconcileAvailability();
+      renderTopAlerts();
+      renderStats();
+      renderEmployeeOptions();
+      renderSelectOptions();
+      renderEmployeesTable();
+      renderPresentList();
+      renderStationTabs();
+      renderStations();
+      renderArrivals();
+      renderGates();
+      renderReferenceTables();
+      renderBreaks();
+      renderSummary();
+      saveState();
+    }
+
+    function tickRender() {
+      if (autoRemoveFinishedWorkers()) {
+        render();
+        return;
+      }
+      reconcileAvailability();
+      renderTopAlerts();
+      renderStats();
+      renderPresentList();
+      renderStationTimers();
+      updateGateStatuses();
+      renderBreaks();
+      renderSummary();
+      saveState();
+    }
+
+    function renderTopAlerts() {
+      const leaderEntry = Object.entries(state.todayRoles).find(([, role]) => role === "lider");
+      const leader = leaderEntry ? findEmployee(leaderEntry[0]) : null;
+      const hello = document.getElementById("helloBanner");
+      if (leader) {
+        hello.textContent = `Witaj ${fullName(leader)}!`;
+        hello.classList.remove("hidden");
+      } else {
+        hello.classList.add("hidden");
+      }
+
+      const ending = state.employees.filter(employee => isPresent(employee.id) && isEndingSoon(employee));
+      const bar = document.getElementById("endingBanner");
+      if (ending.length) {
+        bar.textContent = `Za mniej niż godzinę kończy zmianę: ${ending.map(fullName).join(", ")}.`;
+        bar.classList.add("show");
+        ending.forEach(employee => {
+          if (!state.alertedEnding[employee.id]) {
+            state.alertedEnding[employee.id] = true;
+            setTimeout(() => alert(`${fullName(employee)} za godzinę kończy zmianę.`), 50);
+          }
+        });
+      } else {
+        bar.classList.remove("show");
+      }
+    }
+
+    function renderStats() {
+      const assigned = state.stations.reduce((sum, station) => sum + station.slots.filter(Boolean).length, 0);
+      document.getElementById("statEmployees").textContent = state.employees.length;
+      document.getElementById("statPresent").textContent = Object.keys(state.attendance).length;
+      document.getElementById("statAssigned").textContent = assigned;
+    }
+
+    function employeeOptionItems(includeEmpty = true, includeIds = [], filterEmployee = () => true) {
+      const ids = occupiedEmployeeIds();
+      const employees = state.employees
+        .filter(employee =>
+          filterEmployee(employee) &&
+          isPresent(employee.id) &&
+          (
+            includeIds.includes(employee.id) ||
+            (!attendanceIsPrm(employee.id) && Boolean(state.breaks[employee.id]) && !ids.has(employee.id))
+          )
+        )
+        .sort((a, b) => Number(isEndingSoon(b)) - Number(isEndingSoon(a)) || fullName(a).localeCompare(fullName(b), "pl"));
+      const options = employees.map(employee => `<option value="${employee.id}">${escapeHtml(fullName(employee))}${employee.badgeNumber ? "" : " - brak przepustki"}${isEndingSoon(employee) ? " - kończy za godzinę" : ""}</option>`).join("");
+      return `${includeEmpty ? '<option value="">Wybierz pracownika</option>' : ""}${options}`;
+    }
+
+    function renderEmployeeOptions() {
+      const list = document.getElementById("employeesList");
+      list.innerHTML = state.employees.map(employee => `<option value="${escapeHtml(fullName(employee))}"></option>`).join("");
+    }
+
+    function renderSelectOptions() {
+      const editedArrival = state.arrivals.find(item => item.id === document.getElementById("arrivalId").value);
+      const editedGate = state.gates.find(item => item.id === document.getElementById("gateId").value);
+      ["arrivalEmployee", "gateEmployee1", "gateEmployee2"].forEach(id => {
+        const select = document.getElementById(id);
+        const value = select.value;
+        const includeIds = id === "arrivalEmployee"
+          ? (editedArrival && editedArrival.employeeId ? [editedArrival.employeeId] : [])
+          : (editedGate ? [editedGate.employee1, editedGate.employee2].filter(Boolean) : []);
+        select.innerHTML = employeeOptionItems(true, includeIds);
+        select.value = value;
+      });
+      const arrivalCode = document.getElementById("arrivalCode");
+      const selectedArrival = arrivalCode.value;
+      arrivalCode.innerHTML = `<option value="">Wybierz przylot</option>${nonSchengenArrivalOptions().map(item => `<option value="${item.code}">${escapeHtml(item.label)}</option>`).join("")}`;
+      arrivalCode.value = selectedArrival;
+      const gateCode = document.getElementById("gateCode");
+      const selectedGate = gateCode.value;
+      gateCode.innerHTML = `<option value="">Wybierz Gate</option>${allRyanairGates().map(item => `<option value="${item.code}">${escapeHtml(item.code)} - ${escapeHtml(item.airport)}</option>`).join("")}`;
+      gateCode.value = selectedGate;
+    }
+
+    function renderEmployeesTable() {
+      const body = document.getElementById("employeesTable");
+      if (!state.employees.length) {
+        body.innerHTML = `<tr><td colspan="4">Brak pracowników w bazie.</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = [...state.employees]
+        .sort((a, b) => Number(isEndingSoon(b)) - Number(isEndingSoon(a)) || fullName(a).localeCompare(fullName(b), "pl"))
+        .map(employee => `
+          <tr>
+            <td><strong>${escapeHtml(fullName(employee))}</strong>${employee.isLeader ? '<br><span class="badge blue">lider</span>' : ""}</td>
+            <td>${employee.badgeNumber ? escapeHtml(employee.badgeNumber) : '<span class="badge red">brak przepustki</span>'}</td>
+            <td>${isPresent(employee.id) ? '<span class="badge green">obecny</span>' : '<span class="badge amber">niezatwierdzony</span>'}${isEndingSoon(employee) ? ' <span class="badge red">kończy za godzinę</span>' : ""}</td>
+            <td class="row"><button class="secondary" data-edit="${employee.id}">Edytuj</button><button class="danger" data-delete="${employee.id}">Usuń</button></td>
+          </tr>
+        `).join("");
+    }
+
+    function renderPresentList() {
+      const list = document.getElementById("presentList");
+      const present = state.employees
+        .filter(employee => isPresent(employee.id))
+        .sort((a, b) =>
+          Number(attendanceIsPrm(a.id)) - Number(attendanceIsPrm(b.id)) ||
+          Number(isEndingSoon(b)) - Number(isEndingSoon(a)) ||
+          fullName(a).localeCompare(fullName(b), "pl")
+        );
+      if (!present.length) {
+        list.innerHTML = `<div class="empty">Nie zatwierdzono jeszcze żadnej obecności.</div>`;
+        return;
+      }
+      list.innerHTML = present.map(employee => {
+        const role = state.todayRoles[employee.id] === "koordynator" ? "Koordynator Gate" : state.todayRoles[employee.id] === "lider" ? "Lider zmiany" : "";
+        const remaining = minutesUntilShiftEnd(employee);
+        const shiftEnd = attendanceShiftEnd(employee.id);
+        const startedAt = attendanceStartedAt(employee.id);
+        const isPrm = attendanceIsPrm(employee.id);
+        return `
+          <div class="person ${isEndingSoon(employee) ? "ending" : ""} ${isPrm ? "not-prm" : ""}">
+            <div><strong>${escapeHtml(fullName(employee))}</strong><small>Od ${new Date(startedAt).toLocaleTimeString("pl-PL")}${shiftEnd ? ` • kończy ${shiftEnd}` : ""}${role ? ` • ${role}` : ""}</small></div>
+            <div class="row">
+              <label class="toggle"><input type="checkbox" data-prm="${employee.id}" ${isPrm ? "checked" : ""} /> PRM</label>
+              <span class="badge ${isEndingSoon(employee) ? "red" : "blue"}">${remaining !== null && remaining >= 0 ? `${remaining} min do końca` : elapsedText(startedAt)}</span>
+              <button class="danger" data-end-shift="${employee.id}">Koniec zmiany</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderStations() {
+      const activeGroup = stationGroups.find(group => group.id === activeStationGroup) || stationGroups[0];
+      renderStationCards("stationsGrid", activeGroup.stationIds);
+      renderStationCards("arrivalStationGrid", ["przyloty"]);
+      renderStationCards("passportStationGrid", ["paszporty"]);
+      renderStationCards("leaderStationGrid", ["lider-zmiany"]);
+    }
+
+    function renderStationCards(containerId, stationIds) {
+      const grid = document.getElementById(containerId);
+      if (!grid) return;
+      grid.innerHTML = state.stations.filter(station => stationIds.includes(station.id)).map(station => {
+        const slots = station.slots.map((slot, index) => renderSlot(station, slot, index)).join("");
+        const required = station.max === station.required ? `${station.required} os.` : `${station.required} os. + opcjonalnie ${station.max - station.required}`;
+        return `
+          <article class="station ${station.open ? "" : "closed"}">
+            <div class="station-head">
+              <div class="station-title"><strong>${escapeHtml(station.name)}</strong><small>${escapeHtml(station.group)} • ${required}</small></div>
+              ${station.alwaysOpen ? '<span class="badge blue">stałe stanowisko</span>' : `<label class="toggle"><input type="checkbox" data-open="${station.id}" ${station.open ? "checked" : ""}> Otwarte</label>`}
+            </div>
+            <div class="slots">${slots}</div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderStationTabs() {
+      document.getElementById("stationTabs").innerHTML = stationGroups.map(group => `
+        <button class="${group.id === activeStationGroup ? "active" : ""}" data-station-tab="${group.id}">${escapeHtml(group.label)}</button>
+      `).join("");
+    }
+
+    function renderStationTimers() {
+      document.querySelectorAll("[data-slot-timer]").forEach(timer => {
+        const [stationId, indexText] = timer.dataset.slotTimer.split(":");
+        const station = state.stations.find(item => item.id === stationId);
+        const slot = station && station.slots[Number(indexText)];
+        if (!station || !slot) return;
+        const box = timer.closest(".slot");
+        const level = slotLevel(slot, station);
+        timer.textContent = elapsedText(slot.startedAt);
+        box.classList.remove("assigned", "warning", "danger");
+        box.classList.add(level);
+      });
+    }
+
+    function renderSlot(station, slot, index) {
+      const options = employeeOptionItems(true, [], employee => station.id !== "lider-zmiany" || employee.isLeader);
+      if (slot) {
+        const employee = findEmployee(slot.employeeId);
+        const level = slotLevel(slot, station);
+        return `
+          <div class="slot ${level}">
+            <div class="slot-top">
+              <div><strong>${employee ? escapeHtml(fullName(employee)) : "Usunięty pracownik"}</strong><small> Miejsce ${index + 1}</small></div>
+              <span class="time" data-slot-timer="${station.id}:${index}">${elapsedText(slot.startedAt)}</span>
+            </div>
+            <label>Zmień na <select data-replace-select="${station.id}:${index}">${options}</select></label>
+            <div class="row">
+              <button data-replace="${station.id}:${index}">Zmień osobę</button>
+              <button class="secondary" data-unassign="${station.id}:${index}">Zdejmij na przerwę</button>
+            </div>
+            <div class="error-text" data-slot-error="${station.id}:${index}">brak przepustki</div>
+            <button class="danger hidden" data-force-assign="${station.id}:${index}">Wyślij mimo to</button>
+          </div>
+        `;
+      }
+
+      const disabled = station.open ? "" : "disabled";
+      return `
+        <div class="slot">
+          <label>Miejsce ${index + 1}<select data-select="${station.id}:${index}" ${disabled}>${options}</select></label>
+          <button data-assign="${station.id}:${index}" ${disabled}>Zatwierdź</button>
+          <div class="error-text" data-slot-error="${station.id}:${index}">brak przepustki</div>
+          <button class="danger hidden" data-force-assign="${station.id}:${index}">Wyślij mimo to</button>
+        </div>
+      `;
+    }
+
+    function renderArrivals() {
+      const body = document.getElementById("arrivalsTable");
+      if (!state.arrivals.length) {
+        body.innerHTML = `<tr><td colspan="5">Brak wpisanych przylotów NON-Schengen.</td></tr>`;
+        return;
+      }
+      body.innerHTML = [...state.arrivals].sort((a, b) => a.time.localeCompare(b.time)).map(arrival => {
+        const employee = findEmployee(arrival.employeeId);
+        return `
+          <tr>
+            <td>${escapeHtml(arrival.time)}</td>
+            <td><strong>${escapeHtml(arrival.code)}</strong></td>
+            <td>${employee ? escapeHtml(fullName(employee)) : "-"}</td>
+            <td>${escapeHtml(arrival.notes || "-")}</td>
+            <td class="row"><button class="secondary" data-edit-arrival="${arrival.id}">Edytuj</button><button class="danger" data-delete-arrival="${arrival.id}">Usuń</button></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderGates() {
+      const body = document.getElementById("gatesTable");
+      if (!state.gates.length) {
+        body.innerHTML = `<tr><td colspan="5">Brak wpisanych Gate Ryanair.</td></tr>`;
+        return;
+      }
+      body.innerHTML = [...state.gates].sort((a, b) => a.boarding.localeCompare(b.boarding)).map(gate => {
+        const employee1 = findEmployee(gate.employee1);
+        const employee2 = findEmployee(gate.employee2);
+        const status = gateStatus(gate);
+        const bagsOpen = gateCanEnterBags(gate);
+        const pBags = Number(gate.pBags || 0);
+        const gBags = Number(gate.gBags || 0);
+        return `
+          <tr class="${status === "live" ? "gate-live" : status === "closed" ? "gate-closed" : ""}" data-gate-row="${gate.id}" data-gate-status="${status}">
+            <td>${escapeHtml(gate.boarding)}</td>
+            <td><strong>${escapeHtml(gate.code)}</strong><br>${gateStatusBadge(status)}</td>
+            <td>${escapeHtml([employee1 && fullName(employee1), employee2 && fullName(employee2)].filter(Boolean).join(", ") || "-")}</td>
+            <td>
+              ${bagsOpen ? `
+                <div class="row">
+                  <label>P-Bagi <input type="number" min="0" value="${pBags}" data-pbags="${gate.id}"></label>
+                  <label>G-Bagi <input type="number" min="0" value="${gBags}" data-gbags="${gate.id}"></label>
+                </div>
+              ` : '<span class="badge amber">pole bagaży po 1h</span>'}
+            </td>
+            <td class="row"><button class="secondary" data-close-gate="${gate.id}">Zamknij</button><button class="secondary" data-edit-gate="${gate.id}">Edytuj</button><button class="danger" data-delete-gate="${gate.id}">Usuń</button></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderReferenceTables() {
+      const rows = allNonSchengenFlights().map(item => `
+        <tr><td>${escapeHtml(item.type)}</td><td><strong>${escapeHtml(item.code)}</strong></td><td>${escapeHtml(item.airport)}</td><td>${escapeHtml(item.group)}</td></tr>
+      `).join("");
+      document.getElementById("nonSchengenTable").innerHTML = rows;
+      document.getElementById("ryanairGateTable").innerHTML = allRyanairGates().map(item => `
+        <tr><td><strong>${escapeHtml(item.code)}</strong></td><td>${escapeHtml(item.airport)}</td></tr>
+      `).join("");
+    }
+
+    function renderBreaks() {
+      const list = document.getElementById("breakList");
+      const breaks = Object.entries(state.breaks).map(([employeeId, startedAt]) => ({ employee: findEmployee(employeeId), startedAt, employeeId })).filter(item => item.employee);
+      if (!breaks.length) {
+        list.innerHTML = `<div class="empty">Nikt nie jest aktualnie na przerwie.</div>`;
+        return;
+      }
+      list.innerHTML = breaks.map(item => `
+        <div class="person break">
+          <div><strong>${escapeHtml(fullName(item.employee))}</strong><small>Na przerwie od ${new Date(item.startedAt).toLocaleTimeString("pl-PL")}</small></div>
+          <span class="badge blue">${elapsedText(item.startedAt)}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderSummary() {
+      const presentCount = Object.keys(state.attendance).length;
+      const absent = state.employees.filter(employee => !state.appearedToday[employee.id]);
+      const alerts = state.stations.flatMap(station => station.slots.filter(Boolean).map(slot => ({ station, slot }))).filter(item => slotLevel(item.slot, item.station) !== "assigned").length;
+      const bags = state.gates.reduce((sum, gate) => sum + Number(gate.pBags || 0) + Number(gate.gBags || 0), 0);
+      document.getElementById("summaryPresent").textContent = presentCount;
+      document.getElementById("summaryAbsent").textContent = absent.length;
+      document.getElementById("summaryAlerts").textContent = alerts;
+      document.getElementById("summaryBags").textContent = bags;
+
+      document.getElementById("absentList").innerHTML = absent.length ? absent.map(employee => `
+        <div class="person"><div><strong>${escapeHtml(fullName(employee))}</strong><small>Brak zatwierdzonej obecności</small></div><span class="badge red">nie pojawił się</span></div>
+      `).join("") : `<div class="empty">Wszyscy pracownicy z bazy zostali zatwierdzeni jako obecni.</div>`;
+
+      const assignments = state.stations.flatMap(station => station.slots.filter(Boolean).map(slot => ({ station, slot, employee: findEmployee(slot.employeeId) })));
+      document.getElementById("assignmentSummary").innerHTML = assignments.length ? assignments.map(item => {
+        const level = slotLevel(item.slot, item.station);
+        return `<div class="person"><div><strong>${item.employee ? escapeHtml(fullName(item.employee)) : "Usunięty pracownik"}</strong><small>${escapeHtml(item.station.name)}</small></div><span class="badge ${level === "danger" ? "red" : level === "warning" ? "amber" : "green"}">${elapsedText(item.slot.startedAt)}</span></div>`;
+      }).join("") : `<div class="empty">Nie obsadzono jeszcze żadnego stanowiska.</div>`;
+    }
+
+    document.querySelectorAll("[data-view-button]").forEach(button => button.addEventListener("click", () => switchView(button.dataset.viewButton)));
+
+    document.getElementById("attendanceSearch").addEventListener("input", event => {
+      const employee = employeeFromText(event.target.value);
+      document.getElementById("todayRoleField").classList.toggle("hidden", !(employee && employee.isLeader));
+    });
+
+    document.getElementById("confirmAttendanceButton").addEventListener("click", () => {
+      const input = document.getElementById("attendanceSearch");
+      const message = document.getElementById("attendanceMessage");
+      const employee = employeeFromText(input.value);
+      const shiftEnd = document.getElementById("attendanceShiftEnd").value;
+      const prm = document.getElementById("attendancePrm").checked;
+      if (!employee) return setMessage(message, "Nie znaleziono pracownika w bazie.", true);
+      if (!shiftEnd) return setMessage(message, "Wpisz godzinę zakończenia zmiany.", true);
+      if (isPresent(employee.id)) return setMessage(message, "Ten pracownik jest już zatwierdzony jako obecny.");
+      state.attendance[employee.id] = { startedAt: now(), shiftEnd, prm };
+      state.appearedToday[employee.id] = true;
+      if (prm) removeFromBreak(employee.id); else addToBreak(employee.id);
+      if (employee.isLeader) {
+        const role = document.getElementById("todayRole").value;
+        if (role === "lider") {
+          assignShiftLeader(employee.id);
+        } else if (role) {
+          state.todayRoles[employee.id] = role;
+        }
+      }
+      input.value = "";
+      document.getElementById("attendanceShiftEnd").value = "";
+      document.getElementById("attendancePrm").checked = false;
+      document.getElementById("todayRoleField").classList.add("hidden");
+      document.getElementById("todayRole").value = "";
+      setMessage(message, `Zatwierdzono obecność: ${fullName(employee)}.`);
+      render();
+    });
+
+    document.getElementById("presentList").addEventListener("click", event => {
+      const employeeId = event.target.dataset.endShift;
+      if (!employeeId) return;
+      const employee = findEmployee(employeeId);
+      if (!employee) return;
+      if (!confirm(`Zakończyć zmianę pracownika ${fullName(employee)}?`)) return;
+      removeEmployeeFromDay(employeeId);
+      render();
+    });
+
+    document.getElementById("presentList").addEventListener("change", event => {
+      const employeeId = event.target.dataset.prm;
+      if (!employeeId || !state.attendance[employeeId]) return;
+      if (event.target.checked) {
+        const assignment = findActiveAssignment(employeeId);
+        if (assignment) {
+          event.target.checked = false;
+          alert(`Najpierw zdejmij pracownika ze stanowiska: ${assignment}.`);
+          return;
+        }
+      }
+      state.attendance[employeeId].prm = event.target.checked;
+      if (event.target.checked) removeFromBreak(employeeId); else addToBreak(employeeId);
+      render();
+    });
+
+    document.getElementById("employeeForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const id = document.getElementById("employeeId").value;
+      const data = {
+        firstName: document.getElementById("firstName").value,
+        lastName: document.getElementById("lastName").value,
+        badgeNumber: document.getElementById("badgeNumber").value,
+        isLeader: document.getElementById("isLeader").checked
+      };
+      if (id) {
+        const index = state.employees.findIndex(item => item.id === id);
+        state.employees[index] = { ...createEmployee(data), id };
+      } else {
+        state.employees.push(createEmployee(data));
+      }
+      resetEmployeeForm();
+      render();
+    });
+
+    function resetEmployeeForm() {
+      document.getElementById("employeeForm").reset();
+      document.getElementById("employeeId").value = "";
+      document.getElementById("employeeFormTitle").textContent = "Nowy pracownik";
+      document.getElementById("cancelEditButton").classList.add("hidden");
+    }
+
+    document.getElementById("cancelEditButton").addEventListener("click", resetEmployeeForm);
+
+    document.getElementById("employeesTable").addEventListener("click", event => {
+      const editId = event.target.dataset.edit;
+      const deleteId = event.target.dataset.delete;
+      if (editId) {
+        const employee = findEmployee(editId);
+        document.getElementById("employeeId").value = employee.id;
+        document.getElementById("firstName").value = employee.firstName;
+        document.getElementById("lastName").value = employee.lastName;
+        document.getElementById("badgeNumber").value = employee.badgeNumber;
+        document.getElementById("isLeader").checked = employee.isLeader;
+        document.getElementById("employeeFormTitle").textContent = "Edycja pracownika";
+        document.getElementById("cancelEditButton").classList.remove("hidden");
+      }
+      if (deleteId && confirm("Usunąć pracownika z bazy?")) {
+        state.employees = state.employees.filter(employee => employee.id !== deleteId);
+        delete state.attendance[deleteId];
+        delete state.breaks[deleteId];
+        delete state.todayRoles[deleteId];
+        state.stations.forEach(station => station.slots = station.slots.map(slot => slot && slot.employeeId === deleteId ? null : slot));
+        state.gates.forEach(gate => {
+          if (gate.employee1 === deleteId) gate.employee1 = "";
+          if (gate.employee2 === deleteId) gate.employee2 = "";
+        });
+        state.arrivals.forEach(arrival => { if (arrival.employeeId === deleteId) arrival.employeeId = ""; });
+        render();
+      }
+    });
+
+    function handleStationChange(event) {
+      const stationId = event.target.dataset.open;
+      if (!stationId) return;
+      const station = state.stations.find(item => item.id === stationId);
+      station.open = event.target.checked;
+      if (!station.open) {
+        station.slots.forEach(slot => slot && addToBreak(slot.employeeId));
+        station.slots = station.slots.map(() => null);
+      }
+      render();
+    }
+
+    document.getElementById("stationTabs").addEventListener("click", event => {
+      const groupId = event.target.dataset.stationTab;
+      if (!groupId) return;
+      activeStationGroup = groupId;
+      renderStationTabs();
+      renderStations();
+    });
+
+    function handleStationClick(event) {
+      const assign = event.target.dataset.assign;
+      const replace = event.target.dataset.replace;
+      const unassign = event.target.dataset.unassign;
+      const forceAssign = event.target.dataset.forceAssign;
+      const key = assign || replace || unassign || forceAssign;
+      if (!key) return;
+      const [stationId, indexText] = key.split(":");
+      const station = state.stations.find(item => item.id === stationId);
+      const index = Number(indexText);
+
+      if (unassign) {
+        if (station.slots[index]) {
+          const previousId = station.slots[index].employeeId;
+          if (station.id === "lider-zmiany") delete state.todayRoles[previousId];
+          addToBreak(previousId);
+        }
+        station.slots[index] = null;
+        render();
+        return;
+      }
+
+      const isReplace = Boolean(replace) || Boolean(forceAssign && document.querySelector(`[data-replace-select="${key}"]`));
+      const select = document.querySelector(isReplace ? `[data-replace-select="${key}"]` : `[data-select="${key}"]`);
+      const error = document.querySelector(`[data-slot-error="${key}"]`);
+      const forceButton = document.querySelector(`[data-force-assign="${key}"]`);
+      const employee = findEmployee(select.value);
+      select.classList.remove("invalid");
+      error.classList.remove("show");
+      forceButton.classList.add("hidden");
+      if (!employee) return;
+      if (station.id === "lider-zmiany" && !employee.isLeader) {
+        alert(`${fullName(employee)} nie ma roli lidera w bazie pracowników.`);
+        return;
+      }
+      if (!employee.badgeNumber.trim() && !forceAssign) {
+        select.classList.add("invalid");
+        error.classList.add("show");
+        forceButton.classList.remove("hidden");
+        return;
+      }
+      if (attendanceIsPrm(employee.id)) {
+        alert(`${fullName(employee)} jest oznaczony/oznaczona jako PRM i nie może zostać przypisany/przypisana.`);
+        return;
+      }
+      if (!state.breaks[employee.id]) {
+        alert(`${fullName(employee)} nie jest obecnie dostępny/dostępna na przerwie.`);
+        return;
+      }
+      const activeAssignment = findActiveAssignment(employee.id, isReplace ? station.id : "", isReplace ? index : -1);
+      if (activeAssignment) {
+        alert(`${fullName(employee)} jest już przypisany/przypisana do: ${activeAssignment}. Najpierw zdejmij tę osobę z poprzedniego stanowiska.`);
+        return;
+      }
+      if (isReplace && station.slots[index]) {
+        const previousId = station.slots[index].employeeId;
+        if (station.id === "lider-zmiany") delete state.todayRoles[previousId];
+        addToBreak(previousId);
+      }
+      removeFromBreak(employee.id);
+      station.slots[index] = { employeeId: employee.id, startedAt: now() };
+      if (station.id === "lider-zmiany") {
+        Object.keys(state.todayRoles).forEach(id => {
+          if (state.todayRoles[id] === "lider" && id !== employee.id) delete state.todayRoles[id];
+        });
+        state.todayRoles[employee.id] = "lider";
+      }
+      render();
+    }
+
+    ["stationsGrid", "arrivalStationGrid", "passportStationGrid", "leaderStationGrid"].forEach(id => {
+      document.getElementById(id).addEventListener("change", handleStationChange);
+      document.getElementById(id).addEventListener("click", handleStationClick);
+    });
+
+    document.getElementById("arrivalForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const id = document.getElementById("arrivalId").value || makeId();
+      const previous = state.arrivals.find(item => item.id === id);
+      const arrival = {
+        id,
+        time: document.getElementById("arrivalTime").value,
+        code: document.getElementById("arrivalCode").value.trim(),
+        employeeId: document.getElementById("arrivalEmployee").value,
+        notes: document.getElementById("arrivalNotes").value.trim()
+      };
+      if (arrival.employeeId) {
+        const employee = findEmployee(arrival.employeeId);
+        if (attendanceIsPrm(arrival.employeeId)) return alert(`${fullName(employee)} jest oznaczony/oznaczona jako PRM.`);
+        const assignment = findActiveAssignment(arrival.employeeId, "", -1, "", id);
+        if (assignment) return alert(`${fullName(employee)} jest już przypisany/przypisana do: ${assignment}.`);
+        if (!state.breaks[arrival.employeeId] && (!previous || previous.employeeId !== arrival.employeeId)) {
+          return alert(`${fullName(employee)} nie jest obecnie dostępny/dostępna na przerwie.`);
+        }
+      }
+      if (previous && previous.employeeId && previous.employeeId !== arrival.employeeId) addToBreak(previous.employeeId);
+      if (arrival.employeeId) removeFromBreak(arrival.employeeId);
+      const index = state.arrivals.findIndex(item => item.id === id);
+      if (index >= 0) state.arrivals[index] = arrival; else state.arrivals.push(arrival);
+      resetArrivalForm();
+      render();
+    });
+
+    function resetArrivalForm() {
+      document.getElementById("arrivalForm").reset();
+      document.getElementById("arrivalId").value = "";
+      document.getElementById("cancelArrivalEdit").classList.add("hidden");
+      renderSelectOptions();
+    }
+
+    document.getElementById("cancelArrivalEdit").addEventListener("click", resetArrivalForm);
+
+    document.getElementById("customNonSchengenForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const type = document.getElementById("customFlightType").value;
+      const code = document.getElementById("customFlightCode").value.trim().toUpperCase();
+      const airport = document.getElementById("customFlightAirport").value.trim();
+      if (!code || !airport) return;
+      const exists = allNonSchengenFlights().some(item => item.type === type && item.code.toUpperCase() === code);
+      if (exists) {
+        alert("Ten kod jest już w bazie dla wybranego typu lotu.");
+        return;
+      }
+      state.customNonSchengenFlights.push({ type, group: "Dodane ręcznie", code, airport });
+      event.target.reset();
+      render();
+    });
+
+    document.getElementById("arrivalsTable").addEventListener("click", event => {
+      const editId = event.target.dataset.editArrival;
+      const deleteId = event.target.dataset.deleteArrival;
+      if (editId) {
+        const arrival = state.arrivals.find(item => item.id === editId);
+        document.getElementById("arrivalId").value = arrival.id;
+        renderSelectOptions();
+        document.getElementById("arrivalTime").value = arrival.time;
+        document.getElementById("arrivalCode").value = arrival.code;
+        document.getElementById("arrivalEmployee").value = arrival.employeeId;
+        document.getElementById("arrivalNotes").value = arrival.notes;
+        document.getElementById("cancelArrivalEdit").classList.remove("hidden");
+      }
+      if (deleteId) {
+        const arrival = state.arrivals.find(item => item.id === deleteId);
+        if (arrival && arrival.employeeId) addToBreak(arrival.employeeId);
+        state.arrivals = state.arrivals.filter(item => item.id !== deleteId);
+        render();
+      }
+    });
+
+    document.getElementById("gateForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const allowMissingPass = allowGateMissingPassOnce;
+      allowGateMissingPassOnce = false;
+      const id = document.getElementById("gateId").value || makeId();
+      const previousGate = state.gates.find(item => item.id === id);
+      const gate = {
+        id,
+        code: document.getElementById("gateCode").value.trim(),
+        boarding: document.getElementById("gateBoarding").value,
+        employee1: document.getElementById("gateEmployee1").value,
+        employee2: document.getElementById("gateEmployee2").value,
+        pBags: Number((state.gates.find(item => item.id === id) || {}).pBags || 0),
+        gBags: Number((state.gates.find(item => item.id === id) || {}).gBags || 0),
+        closed: Boolean((state.gates.find(item => item.id === id) || {}).closed)
+      };
+      if (gate.employee1 && gate.employee1 === gate.employee2) {
+        return setMessage(document.getElementById("gateMessage"), "Na Gate nie można wpisać tej samej osoby dwa razy.", true);
+      }
+      const missingPass = [gate.employee1, gate.employee2].map(findEmployee).find(employee => employee && !employee.badgeNumber.trim());
+      if (missingPass && !allowMissingPass) {
+        setMessage(document.getElementById("gateMessage"), `${fullName(missingPass)}: brak przepustki.`, true);
+        document.getElementById("gateForceButton").classList.remove("hidden");
+        return;
+      }
+      document.getElementById("gateForceButton").classList.add("hidden");
+      const prmEmployee = [gate.employee1, gate.employee2].map(findEmployee).find(employee => employee && attendanceIsPrm(employee.id));
+      if (prmEmployee) {
+        return setMessage(document.getElementById("gateMessage"), `${fullName(prmEmployee)} jest oznaczony/oznaczona jako PRM.`, true);
+      }
+      const previousIds = previousGate ? [previousGate.employee1, previousGate.employee2] : [];
+      const unavailableEmployee = [gate.employee1, gate.employee2].map(findEmployee).find(employee => employee && !previousIds.includes(employee.id) && !state.breaks[employee.id]);
+      if (unavailableEmployee) {
+        return setMessage(document.getElementById("gateMessage"), `${fullName(unavailableEmployee)} nie jest obecnie dostępny/dostępna na przerwie.`, true);
+      }
+      const alreadyAssignedId = [gate.employee1, gate.employee2].find(employeeId => employeeId && findActiveAssignment(employeeId, "", -1, id));
+      if (alreadyAssignedId) {
+        const employee = findEmployee(alreadyAssignedId);
+        const activeAssignment = findActiveAssignment(alreadyAssignedId, "", -1, id);
+        return setMessage(document.getElementById("gateMessage"), `${fullName(employee)} jest już przypisany/przypisana do: ${activeAssignment}. Najpierw zdejmij tę osobę z poprzedniego stanowiska.`, true);
+      }
+      const conflict = [gate.employee1, gate.employee2].map(employeeId => gateConflict(employeeId, gate.boarding, id)).find(Boolean);
+      if (conflict) {
+        const employeeId = [gate.employee1, gate.employee2].find(id => id && (id === conflict.employee1 || id === conflict.employee2));
+        const employee = findEmployee(employeeId);
+        return setMessage(document.getElementById("gateMessage"), `${employee ? fullName(employee) : "Pracownik"} nie zdąży, bo robi już Gate ${conflict.code} o ${conflict.boarding}.`, true);
+      }
+      previousIds.filter(employeeId => employeeId && employeeId !== gate.employee1 && employeeId !== gate.employee2).forEach(addToBreak);
+      [gate.employee1, gate.employee2].forEach(removeFromBreak);
+      const index = state.gates.findIndex(item => item.id === id);
+      if (index >= 0) state.gates[index] = gate; else state.gates.push(gate);
+      resetGateForm();
+      render();
+    });
+
+    function resetGateForm() {
+      document.getElementById("gateForm").reset();
+      document.getElementById("gateId").value = "";
+      document.getElementById("gateMessage").classList.add("hidden");
+      document.getElementById("gateForceButton").classList.add("hidden");
+      document.getElementById("cancelGateEdit").classList.add("hidden");
+      renderSelectOptions();
+    }
+
+    document.getElementById("cancelGateEdit").addEventListener("click", resetGateForm);
+
+    document.getElementById("gateForceButton").addEventListener("click", () => {
+      allowGateMissingPassOnce = true;
+      document.getElementById("gateForm").requestSubmit();
+    });
+
+    document.getElementById("customGateForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const code = document.getElementById("customGateCode").value.trim().toUpperCase();
+      const airport = document.getElementById("customGateAirport").value.trim();
+      if (!code || !airport) return;
+      const exists = allRyanairGates().some(item => item.code.toUpperCase() === code);
+      if (exists) {
+        alert("Ten Gate jest już w bazie.");
+        return;
+      }
+      state.customRyanairGates.push({ code, airport });
+      event.target.reset();
+      render();
+    });
+
+    document.getElementById("gatesTable").addEventListener("click", event => {
+      const editId = event.target.dataset.editGate;
+      const deleteId = event.target.dataset.deleteGate;
+      const closeId = event.target.dataset.closeGate;
+      if (editId) {
+        const gate = state.gates.find(item => item.id === editId);
+        document.getElementById("gateId").value = gate.id;
+        renderSelectOptions();
+        document.getElementById("gateCode").value = gate.code;
+        document.getElementById("gateBoarding").value = gate.boarding;
+        document.getElementById("gateEmployee1").value = gate.employee1;
+        document.getElementById("gateEmployee2").value = gate.employee2;
+        document.getElementById("cancelGateEdit").classList.remove("hidden");
+      }
+      if (deleteId) {
+        const gate = state.gates.find(item => item.id === deleteId);
+        if (gate) [gate.employee1, gate.employee2].forEach(addToBreak);
+        state.gates = state.gates.filter(item => item.id !== deleteId);
+        render();
+      }
+      if (closeId) {
+        const gate = state.gates.find(item => item.id === closeId);
+        gate.closed = true;
+        [gate.employee1, gate.employee2].forEach(addToBreak);
+        gate.employee1 = "";
+        gate.employee2 = "";
+        render();
+      }
+    });
+
+    document.getElementById("gatesTable").addEventListener("input", event => {
+      const pId = event.target.dataset.pbags;
+      const gId = event.target.dataset.gbags;
+      const gate = state.gates.find(item => item.id === (pId || gId));
+      if (!gate) return;
+      if (pId) gate.pBags = Math.max(0, Number(event.target.value || 0));
+      if (gId) gate.gBags = Math.max(0, Number(event.target.value || 0));
+      saveState();
+      renderSummary();
+    });
+
+    document.getElementById("resetDayButton").addEventListener("click", () => {
+      if (!confirm("Rozpocząć nowy dzień? Obecność, obsada, przerwy, loty i Gate zostaną wyczyszczone, baza pracowników zostanie zachowana.")) return;
+      state.attendance = {};
+      state.appearedToday = {};
+      state.todayRoles = {};
+      state.breaks = {};
+      state.arrivals = [];
+      state.gates = [];
+      state.alertedEnding = {};
+      state.stations = state.stations.map(station => ({ ...station, open: false, slots: station.slots.map(() => null) }));
+      render();
+    });
+
+    setInterval(tickRender, 1000);
+    render();
+  </script>
+</body>
+</html>
